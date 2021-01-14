@@ -22,7 +22,7 @@ tf.random.set_seed(2)
 
 
 unlabeled_dataset=pd.read_csv('SO_IoT_sentences.csv')
-model_weight = pickle.load(open('SecBot_weights.p','rb'))
+model_weight = pickle.load(open('SecBot+_weights.p','rb'))
 
 from transformers import RobertaTokenizer, TFRobertaForSequenceClassification
 
@@ -69,8 +69,8 @@ for i in range(1+(len(dataset))//10000):
 df = unlabeled_dataset
 df.drop(columns=['Unnamed: 0.1', 'Unnamed: 0'])
 
-df['SecBot'] = new_data
+df['SecBot+'] = new_data
 
 df.insert(0, 'SentenceId', range(1,  len(df)+1))
 
-df.to_csv('SecBot_SO_IoT_Label.csv')
+df.to_csv('SecBot+_SO_IoT_Label.csv')
