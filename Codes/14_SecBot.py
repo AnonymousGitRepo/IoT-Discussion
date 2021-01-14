@@ -17,9 +17,6 @@ import pickle
 
 seed(1)
 tf.random.set_seed(2)
-
-dataset  = pickle.load(open("kfold_cross_validation_dataset_security_aspect.p","rb"))
-
 benchmark_dataset=pd.read_excel('BenchmarkUddinSO-ConsoliatedAspectSentiment.xlsx')
 benchmark_dataset=benchmark_dataset.drop_duplicates(keep='first')
 
