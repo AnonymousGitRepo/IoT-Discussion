@@ -26,6 +26,32 @@ tf.random.set_seed(2)
 
 dataset  = pickle.load(open("kfold_cross_validation_dataset_security_aspect.p","rb"))
 
+stopword=stopwords.words("english")
+def SentenceCleaner2(sent):
+    txt=""
+    for word in re.split('[,()<>|}{~\]\[ ]',sent.lower()): #?
+        if word not in stopword:
+            txt+=(word+" ")
+    return txt
+for i in range(10):
+    dataset['X_Train'][i]=dataset['X_Train'][i].apply(SentenceCleaner2)
+    dataset['X_Test'][i]=dataset['X_Test'][i].apply(SentenceCleaner2)
+    
+def Train_Test_Data_vectorization(x_train,x_test,y_train,y_test):
+  tfidfTransformer = TfidfTransformer()
+  vect=CountVectorizer('english')
+  vect.fit(x_train)
+
+  x_train=vect.transform(x_train)
+  x_train=tfidfTransformer.fit_transform(x_train)
+
+  x_test=vect.transform(x_test)
+  x_test=tfidfTransformer.fit_transform(x_test)
+  
+  x_train=sp.csr_matrix.toarray(x_train)
+  x_test=sp.csr_matrix.toarray(x_test)
+  return x_train,x_test,y_train,y_test
+
 def DNN(x_train,x_test,y_train,y_test):
   input=Input(shape=len(x_train[0]))
   x=Dense(128,activation='relu')(input)
@@ -60,7 +86,7 @@ f1=[]
 pre=[]
 re=[]
 for k in range(10):
-  x_train,x_test,y_train,y_test=dataset2['X_Train'][k],dataset2['X_Test'][k],dataset2['Y_Train'][k],dataset2['Y_Test'][k]
+  x_train,x_test,y_train,y_test=dataset['X_Train'][k],dataset['X_Test'][k],dataset['Y_Train'][k],dataset['Y_Test'][k]
   x_train,x_test,y_train,y_test=Train_Test_Data_vectorization(x_train,x_test,y_train,y_test)
   model=DNN(x_train,x_test,y_train,y_test)
   Model_Compilation(model)
