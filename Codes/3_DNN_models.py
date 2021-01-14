@@ -78,7 +78,8 @@ def Confusion_Matrix(model,x_train,x_test,y_train,y_test):
 
   pre = precision_score(y_test, y_pred, average = None)
   re = recall_score(y_test, y_pred, average = None)
-  f1_score_val=2*pre*re/(pre+re)
+  f1_score_val=f1_score(test_y, final_output, average = None)
+
   return pre,re,f1_score_val
 
 
