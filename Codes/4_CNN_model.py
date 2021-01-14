@@ -160,9 +160,7 @@ def training():
     y_train=Y[dictionary_k_folds["Train"][current_k]]
     y_test=Y[dictionary_k_folds["Test"][current_k]]
 
-    
-    #model = LSTMModel()
-    model = AttentionModel()
+    model = CNNModel()
     cb = []
     reduce_lr_loss = callbacks.ReduceLROnPlateau(monitor='loss', factor=.2, patience=3, min_delta=1e-6, mode='min')
     cb.append(reduce_lr_loss)
