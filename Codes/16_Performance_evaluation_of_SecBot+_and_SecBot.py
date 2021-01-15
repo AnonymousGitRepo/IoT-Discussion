@@ -7,7 +7,7 @@ from sklearn.metrics import classification_report as cr
 from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_score
 from keras import Input,Model,callbacks
 from numpy.random import seed
-
+import tensorflow as tf
 import pandas
 from transformers import *
 seed(1)
