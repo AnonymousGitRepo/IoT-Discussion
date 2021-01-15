@@ -12,6 +12,7 @@ This repository contains the implementation of IoT Security Discussions
 *   scipy
 
 # Materical Used
+
 *   Glove Embedding Wikipedia 2014 + Gigaword- 200D (https://nlp.stanford.edu/projects/glove/)
 *   Mallet (http://mallet.cs.umass.edu/dist/mallet-2.0.8.zip)
 *   BERT pretrained model and tokenizer( https://huggingface.co/models)
@@ -41,6 +42,7 @@ You need to download the datasets from corresponding source (please follow the '
 
 # Code Replication
 After tuning, the best hyperparameters for each model are provided in the codes. Please follow the following steps to replicate this repo- 
+1. download and install all requirements and materials stated above 
 1. download BenchmarkUddinSO-ConsoliatedAspectSentiment.xls from Data folder
 1. run 1_shallow_models.py from Codes folder to get performaces of Baseline-SVM and Logits
 1. download kfold_cross_validation_dataset_security_aspect.p from Data folder(Recomended) **or** run 2_10_fold_cross_validation_dataset.py. A file named kfold_cross_validation_dataset_security_aspect.p will be created in your environment. This file may differ from provided one beacuse of random variable. 
