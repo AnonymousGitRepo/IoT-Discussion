@@ -34,58 +34,8 @@ You need to download the datasets from corresponding source (please follow the '
     List of all tags used in the IoT data collection:
     
     
-    * ___arduino___: 
-arduino,
-arduino-c++,
-arduino-due,
-arduino-esp8266,
-arduino-every,
-arduino-ide,
-arduino-mkr1000,
-arduino-ultra-sonic,
-arduino-uno,
-arduino-uno-wifi,
-arduino-yun,
-platformio
-
-
-   * ___iot___: 
-audiotoolbox,
-audiotrack,
-aws-iot,
-aws-iot-analytics,
-azure-iot-central,
-azure-iot-edge,
-azure-iot-hub,
-azure-iot-hub-device-management,
-azure-iot-sdk,
-azure-iot-suite,
-bosch-iot-suite,
-eclipse-iot,
-google-cloud-iot,
-hypriot,
-iot-context-mapping,
-iot-devkit,
-iot-driver-behavior,
-iot-for-automotive,
-iot-workbench,
-iotivity,
-microsoft-iot-central,
-nb-iot,
-rhiot,
-riot,
-riot-games-api,
-riot.js,
-riotjs,
-watson-iot,
-windows-10-iot-core,
-windows-10-iot-enterprise,
-windows-iot-core-10,
-windowsiot,
-wso2iot,
-xamarin.iot
-
-
+    * ___arduino___: arduino, arduino-c++, arduino-due, arduino-esp8266, arduino-every, arduino-ide, arduino-mkr1000, arduino-ultra-sonic, arduino-uno, arduino-uno-wifi, arduino-yun, platformio
+    * ___iot___: audiotoolbox, audiotrack, aws-iot, aws-iot-analytics, azure-iot-central, azure-iot-edge, azure-iot-hub, azure-iot-hub-device-management, azure-iot-sdk, azure iot-suite, bosch-iot-suite, eclipse-iot, google-cloud-iot, hypriot, iot-context-mapping, iot-devkit, iot-driver-behavior, iot-for-automotive, iot-workbench, iotivity, microsoft iot-central, nb-iot, rhiot, riot, riot-games-api, riot.js, riotjs, watson-iot, windows-10-iot-core, windows-10-iot-enterprise, windows-iot-core-10, windowsiot, wso2iot, xamarin.iot
    * ___raspberry-pi___:
 adafruit,
 android-things,
