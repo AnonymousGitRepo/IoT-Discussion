@@ -49,7 +49,8 @@ arduino-yun,
 platformio
 
 
-*iot*: audiotoolbox,
+    *iot*: 
+audiotoolbox,
 audiotrack,
 aws-iot,
 aws-iot-analytics,
@@ -85,7 +86,8 @@ wso2iot,
 xamarin.iot
 
 
-*raspberry-pi*: adafruit,
+    *raspberry-pi*:
+adafruit,
 android-things,
 attiny,
 avrdude,
