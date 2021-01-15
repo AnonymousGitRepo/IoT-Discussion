@@ -28,5 +28,5 @@ You need to download the datasets from corresponding source (please follow the '
 
 # Code Replication
 Please follow the following steps to replicate this repo
-** RQ1
+** RQ1 **
 
