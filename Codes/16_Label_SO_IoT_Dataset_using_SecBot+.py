@@ -31,7 +31,7 @@ model = TFRobertaForSequenceClassification.from_pretrained('roberta-base' , num_
 tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
 
 #pretained weight
-model.set_weights(model_weight["Roberta Model weight(Roberta-base) full-dataset"])
+model.set_weights(model_weight)
 
 
 def new_tokenize(dataset):
