@@ -87,5 +87,4 @@ class BertModel:
 class_count = 2
 bert = BertModel(class_count)
 model = bert.run_model()
-final_model_weights ={"Roberta Model weight(Roberta-base) full-dataset":model.get_weights()} 
-pickle.dump(final_model_weights, open("SecBot_weights.p","wb"))
+pickle.dump(model.get_weights(), open("SecBot_weights.p","wb"))
