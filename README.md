@@ -34,7 +34,7 @@ You need to download the datasets from corresponding source (please follow the '
     List of all tags used in the IoT data collection:
     
     
-***arduino***: 
+** ***arduino***: 
 arduino,
 arduino-c++,
 arduino-due,
@@ -49,7 +49,7 @@ arduino-yun,
 platformio
 
 
-***iot***: 
+**  ***iot***: 
 audiotoolbox,
 audiotrack,
 aws-iot,
@@ -86,7 +86,7 @@ wso2iot,
 xamarin.iot
 
 
-***raspberry-pi***:
+**  ***raspberry-pi***:
 adafruit,
 android-things,
 attiny,
