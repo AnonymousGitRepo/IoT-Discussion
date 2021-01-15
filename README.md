@@ -59,4 +59,4 @@ After tuning, the best hyperparameters for each model are provided in the codes.
 1. Make sure, you have downloaded Mallet from provided links and unzipped mallet-X(e.g. mallet2.0.8) to mallet-X/bin/mallet. run 18_Topic_Modeling.py and IoT_security_topics.xlsx file will be created. This file also present inside the Data folder. You can get 11 topics name from that file.
 1. downlaod IoTPostInformation.csv, QuestionTags.pkl, and SO_IoT_sentences.rar file to create evolution charts and figures.
 
-_N.B. Performances depends on random state. Random state may differ environment to environment and performance may also vary._
+_N.B. Performance depends on random state. Random state may differ environment to environment and performance may also vary._
