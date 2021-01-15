@@ -34,7 +34,7 @@ You need to download the datasets from corresponding source (please follow the '
     List of all tags used in the IoT data collection:
     
     
-    *arduino*{
+    *arduino*: 
 arduino,
 arduino-c++,
 arduino-due,
@@ -46,8 +46,10 @@ arduino-ultra-sonic,
 arduino-uno,
 arduino-uno-wifi,
 arduino-yun,
-platformio}
-*iot*{audiotoolbox,
+platformio
+
+
+*iot*: audiotoolbox,
 audiotrack,
 aws-iot,
 aws-iot-analytics,
@@ -80,8 +82,10 @@ windows-10-iot-enterprise,
 windows-iot-core-10,
 windowsiot,
 wso2iot,
-xamarin.iot\}
-*raspberry-pi*{adafruit,
+xamarin.iot
+
+
+*raspberry-pi*: adafruit,
 android-things,
 attiny,
 avrdude,
@@ -109,8 +113,9 @@ servo,
 sim900,
 teensy,
 wiringpi,
-xbee}
-}
+xbee
+
+
 # Code Replication
 After tuning, the best hyperparameters for each model are provided in the codes. Please follow the following steps to replicate this repo- 
 1. download BenchmarkUddinSO-ConsoliatedAspectSentiment.xls from Data folder
