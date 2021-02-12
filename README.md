@@ -42,7 +42,7 @@ This repository contains the implementation of IoT Security Discussions
      * ___ALBERT___: We use albert-base-v1 model that is trained on same data as BERT. This model has only 11M parameters.
      * ___FunnelBERT___: We use funnel-transformer/small-base model that is trained onBookCorpus, a dataset consisting of 11,038 unpublished books, English Wikipedia (excluding lists, tables and headers), Clue Web: a dataset of 733,019,372 English web pages, GigaWord: an archive of newswire text data, Common Crawl: a dataset of raw web pages. This model has 115M parameters.
      * ___ELECTRA___: We use google/electra-small-discriminator model that has only 14M parameters.
-We collect all information and dataset from huggingface.co. For further details please follow the site.
+* We collect all information and dataset from <a #href="huggingface.co">huggingface.co</a>. For further details please follow the site.
      
      
 
