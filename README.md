@@ -86,18 +86,25 @@ _N.B. Performance depends on random state. Random state may differ environment t
 
 ## References
 <a id="1" >[1]</a>
-N. C. Dang, M. N. Moreno-Garca, and F. De la Prieta, "Sentiment analysis based on deeplearning: A comparative study" Electronics, vol. 9, p. 483, Mar 2020.
+N. C. Dang, M. N. Moreno-Garca, and F. De la Prieta, "Sentiment analysis based on deeplearning: A comparative study" Electronics, vol. 9, p. 483, Mar 2020.  
+
 <a id="2" >[2]</a>
-F. Abid,  M. Alam,  M. Yasir,  and C. Li,  "Sentiment analysis through recurrent variantslatterly on convolutional neural network of twitter" Future Generation Computer Systems,vol. 95, pp. 292–308, 2019.
+F. Abid,  M. Alam,  M. Yasir,  and C. Li,  "Sentiment analysis through recurrent variantslatterly on convolutional neural network of twitter" Future Generation Computer Systems,vol. 95, pp. 292–308, 2019.  
+
 <a id="3" >[3]</a>
-Q. T. Ain, M. Ali, A. Riaz, A. Noureen, M. Kamran, B. Hayat, and A. Rehman, "Sentimentanalysis using deep learning techniques:  A review" International Journal of AdvancedComputer Science and Applications, vol. 8, no. 6, 2017
+Q. T. Ain, M. Ali, A. Riaz, A. Noureen, M. Kamran, B. Hayat, and A. Rehman, "Sentimentanalysis using deep learning techniques:  A review" International Journal of AdvancedComputer Science and Applications, vol. 8, no. 6, 2017  
+
 <a id="4" >[4]</a>
-. S. M. Alharbi and E. de Doncker, "Twitter sentiment analysis with a deep neural net-work:  An enhanced approach using user behavioral information" Cognitive Systems Re-search, vol. 54, pp. 50–61, 2019.
+. S. M. Alharbi and E. de Doncker, "Twitter sentiment analysis with a deep neural net-work:  An enhanced approach using user behavioral information" Cognitive Systems Re-search, vol. 54, pp. 50–61, 2019.  
+
 <a id="5" >[5]</a>
-Y. Liu, M. Ott, N. Goyal, J. Du, M. Joshi, D. Chen, O. Levy, M. Lewis, L. Zettlemoyer,and V. Stoyanov,  "Roberta:  A robustly optimized BERT pretraining approach" CoRR,vol. abs/1907.11692, 2019.
+Y. Liu, M. Ott, N. Goyal, J. Du, M. Joshi, D. Chen, O. Levy, M. Lewis, L. Zettlemoyer,and V. Stoyanov,  "Roberta:  A robustly optimized BERT pretraining approach" CoRR,vol. abs/1907.11692, 2019.  
+
 <a id="6">[6]</a>
-Z. Hameed and B. Garcia-Zapirain, "Sentiment Classification Using a Single-Layered BiLSTM Model," in IEEE Access, vol. 8, pp. 73992-74001, 2020, doi: 10.1109/ACCESS.2020.2988550.
+Z. Hameed and B. Garcia-Zapirain, "Sentiment Classification Using a Single-Layered BiLSTM Model," in IEEE Access, vol. 8, pp. 73992-74001, 2020, doi: 10.1109/ACCESS.2020.2988550.  
+
 <a id="7">7</a>
-J. Devlin, M. Chang, K. Lee, and K. Toutanova, "BERT: pre-training of deep bidirectionaltransformers for language understanding" CoRR, vol. abs/1810.04805, 2018.
+J. Devlin, M. Chang, K. Lee, and K. Toutanova, "BERT: pre-training of deep bidirectionaltransformers for language understanding" CoRR, vol. abs/1810.04805, 2018.  
+
 <a id="8">8</a>
 .  Sanh,  L.  Debut,  J.  Chaumond,  and  T.  Wolf,  “Distilbert,  a  distilled  version  of  bert:smaller, faster, cheaper and lighter,”ArXiv, vol. abs/1910.01108, 2019.
