@@ -64,60 +64,7 @@ After tuning, the best hyperparameters for each model are provided in the codes.
 
 _N.B. Performance depends on random state. Random state may differ environment to environment and performance may also vary._
 
-@article{Dang_2020,
-   title={Sentiment Analysis Based on Deep Learning: A Comparative Study},
-   volume={9},
-   ISSN={2079-9292},
-   url={http://dx.doi.org/10.3390/electronics9030483},
-   DOI={10.3390/electronics9030483},
-   number={3},
-   journal={Electronics},
-   publisher={MDPI AG},
-   author={Dang, Nhan Cach and Moreno-García, María N. and De la Prieta, Fernando},
-   year={2020},
-   month={Mar},
-   pages={483}
-}
-
-@article{ALHARBI201950,
-title = {Twitter sentiment analysis with a deep neural network: An enhanced approach using user behavioral information},
-journal = {Cognitive Systems Research},
-volume = {54},
-pages = {50-61},
-year = {2019},
-issn = {1389-0417},
-doi = {https://doi.org/10.1016/j.cogsys.2018.10.001},
-url = {https://www.sciencedirect.com/science/article/pii/S1389041718300482},
-author = {Ahmed Sulaiman M. Alharbi and Elise {de Doncker}},
-keywords = {Opinion mining, Sentiment analysis, Social media, Deep learning, Natural language processing},
-abstract = {Sentiment analysis on social media such as Twitter has become a very important and challenging task. Due to the characteristics of such data—tweet length, spelling errors, abbreviations, and special characters—the sentiment analysis task in such an environment requires a non-traditional approach. Moreover, social media sentiment analysis is a fundamental problem with many interesting applications. Most current social media sentiment classification methods judge the sentiment polarity primarily according to textual content and neglect other information on these platforms. In this paper, we propose a neural network model that also incorporates user behavioral information within a given document (tweet). The neural network used in this paper is a Convolutional Neural Network (CNN). The system is evaluated on two datasets provided by the SemEval-2016 Workshop. The proposed model outperforms current baseline models (including Naive Bayes and Support Vector Machines), which shows that going beyond the content of a document (tweet) is beneficial in sentiment classification, because it provides the classifier with a deep understanding of the task.}
-}
-
-
-@article{ABID2019292,
-title = {Sentiment analysis through recurrent variants latterly on convolutional neural network of Twitter},
-journal = {Future Generation Computer Systems},
-volume = {95},
-pages = {292-308},
-year = {2019},
-issn = {0167-739X},
-doi = {https://doi.org/10.1016/j.future.2018.12.018},
-url = {https://www.sciencedirect.com/science/article/pii/S0167739X18324944},
-author = {Fazeel Abid and Muhammad Alam and Muhammad Yasir and Chen Li},
-keywords = {Sentiment analysis, Word embeddings, Recurrent neural network (RNNs), Convolutional neural network (CNNs)},
-abstract = {Sentiment analysis has been a hot area in the exploration field of language understanding, however, neural networks used in it are even lacking. Presently, the greater part of the work is proceeding on recognizing sentiments by concentrating on syntax and vocabulary. In addition, the task identified with natural language processing and for computing the exceptional and remarkable outcomes Recurrent neural networks (RNNs) and Convolutional neural networks (CNNs) have been utilized. Keeping in mind the end goal to capture the long-term dependencies CNNs, need to rely on assembling multiple layers. In this Paper for the improvement in understanding the sentiments, we constructed a joint architecture which places of RNN at first for capturing long-term dependencies with CNNs using global average pooling layer while on top a word embedding method using GloVe procured by unsupervised learning in the light of substantial twitter corpora to deal with this problem. Experimentations exhibit better execution when it is compared with the baseline model on the twitter’s corpora which tends to perform dependable results for the analysis of sentiment benchmarks by achieving 90.59% on Stanford Twitter Sentiment Corpus, 89.46% on Sentiment Strength Twitter Data and 88.72% on Health Care Reform Dataset respectively. Empirically, our work turned to be an efficient architecture with slight hyperparameter tuning which capable us to reduce the number of parameters with higher performance and not merely relying on convolutional multiple layers by constructing the RNN layer followed by convolutional layer to seizure long-term dependencies.}
-}
-
-
-@article{Ain2017,
-title = {Sentiment Analysis Using Deep Learning Techniques: A Review},
-journal = {International Journal of Advanced Computer Science and Applications},
-doi = {10.14569/IJACSA.2017.080657},
-url = {http://dx.doi.org/10.14569/IJACSA.2017.080657},
-year = {2017},
-publisher = {The Science and Information Organization},
-volume = {8},
-number = {6},
-author = {Qurat Tul Ain and Mubashir Ali and Amna Riaz and Amna Noureen and Muhammad Kamran and Babar Hayat and A. Rehman}
-}
+## References
+<a id="1" >[1]</a>
+N. C. Dang, M. N. Moreno-Garca, and F. De la Prieta, “Sentiment analysis based on deeplearning: A comparative study,”Electronics, vol. 9, p. 483, Mar 2020
 
