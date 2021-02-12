@@ -25,8 +25,12 @@ This repository contains the implementation of IoT Security Discussions
 *   LDA Mallet
 
 # Architectures
-* Traditional Deep Learning Methods
--> We follow standard architecture of traditional DNN, CNN, and LSTM that are ubiquotously used in various research works for sentiment analysis [[1]](#1) [[2]](#2) [[3]](#3) [[3]](#3).  
+*   Traditional Deep Learning Methods : We follow standard architecture of traditional DNN, CNN, and LSTM that are ubiquotously used in various research works for sentiment         analysis [[1]](#1) [[2]](#2) [[3]](#3) [[3]](#3). We use single neuron with sigmoid activation for the output layer that means we classify a instance positively only if output is greater or equals to .5. We follow standard random search algorithms for fine-tuning hyperparameters. For example, we start our experiment with a wild guess of hyper parameters then tweak the hyperparameters back and forth to get best fitted ones. A brief overview of these architectures are given below-
+    *___CNN___: We implemet CNN following the architecture used by Dang at el.[[1]](#1). Architecture contains four different layers e.g. convolutional layer, pooling layer, dropout layer, and fully connected layer. After fine tuning, our final CNN model has a input layer followed by a convolutional layer, dropout layer, pooling layer, flatten layer, a dense layer and finally the output layer. For detailed hyper parameter set, please follow 4_CNN_model.py.
+    *___DNN___: We implemet DNN following the architecture used by Dang at el.[[1]](#1). After fine tuning, our final DNN model has a input layer followed by a dense layer and the output layer. For detailed hyper parameter set, please follow 3_DNN_model.py.
+    *___LSTM___: We follow the architecture used by Alharbi at el.[[4]](#4). After fine tuning, our final LSTM model has a input layer followed by a lstm layer, a dense layer, flatten layer, again a dense layer and the output layer. For detailed hyper parameter set, please follow 4_LSTM_model.py.
+    *___BiLSTM___: We implement a single layer BiLSTM model following the proposed architecture by Hameed at el. [[6]](#6) for sentiment detection of a single sentence. Architure contains a single bi-directional lstm layer followed by a pooling layer, a concatenation layer and the final output layer.
+*   BERT based Advanced DL Models: Our  
 # Code
 You will find the codes of this project inside the "Codes" folder. The codes are organised in a sequential manner.
 
@@ -75,5 +79,6 @@ Q. T. Ain, M. Ali, A. Riaz, A. Noureen, M. Kamran, B. Hayat, and A. Rehman, "Sen
 . S. M. Alharbi and E. de Doncker, "Twitter sentiment analysis with a deep neural net-work:  An enhanced approach using user behavioral information" Cognitive Systems Re-search, vol. 54, pp. 50–61, 2019.
 <a id="5" >[5]</a>
 Y. Liu, M. Ott, N. Goyal, J. Du, M. Joshi, D. Chen, O. Levy, M. Lewis, L. Zettlemoyer,and V. Stoyanov,  "Roberta:  A robustly optimized BERT pretraining approach" CoRR,vol. abs/1907.11692, 2019.
-
+<a id="6">[6]</a>
+Z. Hameed and B. Garcia-Zapirain, "Sentiment Classification Using a Single-Layered BiLSTM Model," in IEEE Access, vol. 8, pp. 73992-74001, 2020, doi: 10.1109/ACCESS.2020.2988550.
 
