@@ -25,14 +25,28 @@ This repository contains the implementation of IoT Security Discussions
 *   LDA Mallet
 
 # Architecture Overview
-*   Traditional Deep Learning Methods : We follow standard architecture of traditional DNN, CNN, and LSTM that are ubiquotously used in various research works for sentiment         analysis [[1]](#1) [[2]](#2) [[3]](#3) [[3]](#3). We use single neuron with sigmoid activation for the output layer that means we classify a instance positively only if         output is greater or equals to .5. We follow standard random search algorithms for fine-tuning hyperparameters. For example, we start our experiment with a wild guess of         hyper parameters then tweak the hyperparameters back and forth to get best fitted ones. A brief overview of these architectures are given below-
+*   Traditional Deep Learning Methods : We follow standard architecture of traditional DNN, CNN, and LSTM that are ubiquotously used in various research works for sentiment         analysis [[1]](#1) [[2]](#2) [[3]](#3) [[4]](#4). We use single neuron with sigmoid activation for the output layer that means we classify a instance positively only if         output is greater or equals to .5. We follow standard random search algorithms for fine-tuning hyperparameters. For example, we start our experiment with a wild guess of         hyper parameters then tweak the hyperparameters back and forth to get best fitted ones. A brief overview of these architectures are given below-
 
 
     * ___CNN___: We implemet CNN following the architecture used by Dang at el.[[1]](#1). Architecture contains four different layers e.g. convolutional layer, pooling layer, dropout layer, and fully connected layer. After fine tuning, our final CNN model has a input layer followed by a convolutional layer, dropout layer, pooling layer, flatten layer, a dense layer and finally the output layer. For detailed hyper parameter set, please follow 4_CNN_model.py.
     * ___DNN___: We implemet DNN following the architecture used by Dang at el.[[1]](#1). After fine tuning, our final DNN model has a input layer followed by a dense layer and the output layer. For detailed hyper parameter set, please follow 3_DNN_model.py.
     * ___LSTM___: We follow the architecture used by Alharbi at el.[[4]](#4). After fine tuning, our final LSTM model has a input layer followed by a lstm layer, a dense layer, flatten layer, again a dense layer and the output layer. For detailed hyper parameter set, please follow 4_LSTM_model.py.
-    * ___BiLSTM___: We implement a single layer BiLSTM model following the proposed architecture by Hameed at el. [[6]](#6) for sentiment detection of a single sentence. Architure contains a single bi-directional lstm layer followed by a pooling layer, a concatenation layer and the final output layer.
-*   BERT based Advanced DL Models: Our  
+    * ___BiLSTM___: We implement a single layer BiLSTM model following the proposed architecture by Hameed at el. [[6]](#6) for sentiment detection of a single sentence. Architure contains a single bi-directional lstm layer followed by a pooling layer, a concatenation layer and the final output layer. For detailed hyper parameter set, please follow 5_Bi_LSTM_model.py.
+*   BERT based Advanced DL Models: BERT based model pre-trained on a large corpus of English data, over multiple gigantic datasets like Wikipedia, CC-News, OpenWebText, and etc,  in a self-supervised fashion with the Masked language modeling (MLM) objective. Taking a sentence, the model randomly masks 15% of the words in the input then runs the entire masked sentence through the model and has to predict the masked words. On the top of this embedding, we use pre-trained BERT sequence classifier that classifies sentence/ sentences according to a given number of classes. These pre-trained classifier has a high computation architecture that is pre-trained on GLUE dataset. We set the output layer with 2 neurons(Security & Non-security) and classified each sentence into the class having the maximum value among the classes. We then tune the parameters on the training dataset. There already exists a suggested hyperparameter set in huggingface for these transformers model. For example, suggested hyperparameters for BERT sequence classifiers are batch-size = 32, learning-rate = 3e-5, epochs = 3, max-sequence-length = 128. We applied grid search hyperparameter tuning here. For example, our batch-size tuning sets are  {16,32,64}, learning-rate are {1e-5, 3e-5} and epochs are {2,3,4}. A brief overview of used BERT-based models are given below-
+
+
+     * ___BERT___: We use bert-base-uncased[[5]](#5) pre-trained model that is trained on BookCorpus, a dataset consisting of 11,038 unpublished books and English Wikipedia. Model has 110M parameters.
+     * ___RoBERTa___: We use roberta-base[[5]](#5) model that is trained on a large collection of five datasets e.g. English Wikipedia, CC-News, OpenWebText, Stories, and BookCorpus, that combinedly equal to 160GB of texts. This model has around 125M parameters.
+     * ___XLNet___: We use xlnet-base-cased model that is trained on English Wikipedia, and BookCorpus, and etc. This model has around 110M parameters.
+     * ___DistilBERT___: We use distilbert-base-uncased[[7]](#7) model that is trained on same data as BERT. This model sequeezes the layers which results in a smaller parameter than BERT of size 66M.
+     * ___ALBERT___: We use albert-base-v1 model that is trained on same data as BERT. This model has only 11M parameters.
+     * ___FunnelBERT___: We use funnel-transformer/small-base model that is trained onBookCorpus, a dataset consisting of 11,038 unpublished books, English Wikipedia (excluding lists, tables and headers), Clue Web: a dataset of 733,019,372 English web pages, GigaWord: an archive of newswire text data, Common Crawl: a dataset of raw web pages. This model has 115M parameters.
+     * ___ELECTRA___: We use google/electra-small-discriminator model that has only 14M parameters.
+We collect all information and dataset from huggingface.co. For further details please follow the site.
+     
+     
+
+
 # Code
 You will find the codes of this project inside the "Codes" folder. The codes are organised in a sequential manner.
 
@@ -83,4 +97,7 @@ Q. T. Ain, M. Ali, A. Riaz, A. Noureen, M. Kamran, B. Hayat, and A. Rehman, "Sen
 Y. Liu, M. Ott, N. Goyal, J. Du, M. Joshi, D. Chen, O. Levy, M. Lewis, L. Zettlemoyer,and V. Stoyanov,  "Roberta:  A robustly optimized BERT pretraining approach" CoRR,vol. abs/1907.11692, 2019.
 <a id="6">[6]</a>
 Z. Hameed and B. Garcia-Zapirain, "Sentiment Classification Using a Single-Layered BiLSTM Model," in IEEE Access, vol. 8, pp. 73992-74001, 2020, doi: 10.1109/ACCESS.2020.2988550.
-
+<a id="7">7</a>
+J. Devlin, M. Chang, K. Lee, and K. Toutanova, "BERT: pre-training of deep bidirectionaltransformers for language understanding" CoRR, vol. abs/1810.04805, 2018.
+<a id="8">8</a>
+.  Sanh,  L.  Debut,  J.  Chaumond,  and  T.  Wolf,  “Distilbert,  a  distilled  version  of  bert:smaller, faster, cheaper and lighter,”ArXiv, vol. abs/1910.01108, 2019.
