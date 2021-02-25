@@ -5,6 +5,7 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 import random
+from sklearn.model_selection import StratifiedKFold
 from sklearn.svm import LinearSVC
 from sklearn.linear_model import LogisticRegression 
 import re
@@ -89,7 +90,7 @@ def PerformanceMatrix(yTest,prediction):
         pre.append(sn)
         re.append(sp)
         F1.append(f1)
-        print(,"Pre: ",sn,"Re: ",sp,"F1: ",f1)
+        print("Pre: ",sn,"Re: ",sp,"F1: ",f1)
 
 for k in range(10):
     current_k = k
