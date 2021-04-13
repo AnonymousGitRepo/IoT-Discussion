@@ -3,7 +3,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import SGDClassifier
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, matthews_corrcoef, roc_auc_score
 import random
 from sklearn.model_selection import StratifiedKFold
 from sklearn.svm import LinearSVC
@@ -12,29 +12,19 @@ import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 
-dataset=pd.read_excel('BenchmarkUddinSO-ConsoliatedAspectSentiment.xlsx')
+opiner = pd.read_excel('../input/iot-discussion/Opiner.xlsx')
+combined = pd.read_excel('../input/iot-discussion/Combined.xlsx')
+validation = pd.read_excel('../input/iot-discussion/Validation_Sample.xlsx')
 
-current_aspect="Security"
-def Label(row):
-  if current_aspect in row:
-    return 1
-  return 0
 
-#removes duplicate entries
-dataset = dataset.drop_duplicates(keep='first')
-data = dataset['sent']
-labels = dataset['codes'] 
-Y=labels.apply(Label)
-
-Y=Y.to_numpy()
-
-skf=StratifiedKFold(n_splits=10,shuffle=True,random_state = 42)
-temp=skf.split(data,Y)
-dictionary_k_folds={"Train":[],"Test":[]}
-for train,test in temp:
-  dictionary_k_folds["Train"].append(train)
-  dictionary_k_folds["Test"].append(test)
-
+def cross_fold(dataset, label):
+  skf=StratifiedKFold(n_splits=10,shuffle=True,random_state = 42)
+  temp=skf.split(dataset, label)
+  dictionary_k_folds={"Train":[],"Test":[]}
+  for train,test in temp:
+    dictionary_k_folds["Train"].append(train)
+    dictionary_k_folds["Test"].append(test)
+  return dictionary_k_folds
 def VocabularyCleaner(vocabulary):
         number=r"^[0-9]+"
         number=re.compile(number)
@@ -48,8 +38,6 @@ def VocabularyCleaner(vocabulary):
         return l
 
 countvector = CountVectorizer(stop_words='english')
-
-
 def classifier(type):
   if type=="SGD":
     cls = SGDClassifier(alpha=.0001, max_iter=2000,
@@ -58,9 +46,10 @@ def classifier(type):
     return cls
   cls = LogisticRegression(max_iter=2000,penalty='l2',warm_start=False,class_weight='balanced')
   return cls
-  
+
 def Sentence2VectPreparation(sentTrain,sentTest):
         tfidfTransformer = TfidfTransformer()
+#         print(sentTrain, sentTest)
         
         tfidVect=TfidfVectorizer(sublinear_tf=True, max_df=.5, stop_words='english')
         tfidVect.fit(sentTrain)
@@ -77,7 +66,8 @@ def Sentence2VectPreparation(sentTrain,sentTest):
 pre =[]
 re=[]
 F1=[]
-
+auc = []
+mccc = []
 def PerformanceMatrix(yTest,prediction):
         TN, FP, FN, TP = confusion_matrix(yTest, prediction).ravel()
         total=len(yTest)
@@ -87,17 +77,28 @@ def PerformanceMatrix(yTest,prediction):
         mcc=(TP*TN-FP*FN)/(((TP+FP)*(TP+FN)*(TN+FP)*(TN+FN))**.5)
         f1=2*(sn*sp)/(sn+sp)
         neg=TN/(TN+FP)
+        ac = roc_auc_score(yTest, prediction)
+        mc = matthews_corrcoef(yTest, prediction)
+        mccc.append(mc)
+        auc.append(ac)
         pre.append(sn)
         re.append(sp)
         F1.append(f1)
-        print("Pre: ",sn,"Re: ",sp,"F1: ",f1)
+        print(sn,sp,f1, ac, mcc)
 
-for k in range(10):
+def cross_fold_performance(dataset, label):
+  dictionary_k_folds = cross_fold(dataset, label)
+  pre =[]
+  re=[]
+  F1=[]
+  auc = []
+  mccc = []
+  for k in range(10):
     current_k = k
-    x_train=data[dictionary_k_folds["Train"][current_k]]
-    x_test=data[dictionary_k_folds["Test"][current_k]]
-    y_train=Y[dictionary_k_folds["Train"][current_k]]
-    y_test=Y[dictionary_k_folds["Test"][current_k]]
+    x_train=dataset[dictionary_k_folds["Train"][current_k]]
+    x_test=dataset[dictionary_k_folds["Test"][current_k]]
+    y_train=label[dictionary_k_folds["Train"][current_k]]
+    y_test=label[dictionary_k_folds["Test"][current_k]]
 
     xTrain,xTest=Sentence2VectPreparation(x_train,x_test)
     #select the classifier
@@ -107,8 +108,25 @@ for k in range(10):
     prediction = cls.predict(xTest)
     PerformanceMatrix(y_test,prediction)
 
-print(sum(F1)/10)
+  print(sum(pre)/10, sum(re)/10,sum(F1)/10 , sum(auc)/10, sum(mccc)/10)
 
-print(sum(pre)/10)
-
-print(sum(re)/10)
+ def validation_performance(dataset, label):
+  x_train=dataset.to_list()
+  x_test=validation['sentence'].to_list()
+  x_train = [str(i) for i in x_train]
+  x_test = [str(i) for i in x_test]
+  y_train=label
+  y_test=validation['IsAboutSecurity']
+  xTrain,xTest=Sentence2VectPreparation(x_train,x_test)
+    #select the classifier
+  cls = classifier("oth")
+  cls.fit(xTrain, y_train)
+  prediction = cls.predict(xTest)
+  PerformanceMatrix(y_test,prediction)
+ 
+#performance of opiner
+# cross_fold_performance(opiner['Sentence'], opiner['IsAboutSecurity'])
+# validation_performance(opiner['Sentence'], opiner['IsAboutSecurity'])
+#performance of combined
+# cross_fold_performance(combined['Sentence'], combined['IsAboutSecurity'])
+# validation_performance(combined['Sentence'], combined['IsAboutSecurity'])
