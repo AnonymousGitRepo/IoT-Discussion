@@ -21,9 +21,9 @@ from sklearn.feature_extraction.text import CountVectorizer,TfidfTransformer
 from sklearn.model_selection import StratifiedKFold
 from keras import Input,Model,callbacks
 from keras.layers import Dense,Dropout,Embedding,LSTM,Flatten,Dot,ReLU,LeakyReLU,LayerNormalization,GlobalAveragePooling1D,GlobalMaxPooling1D,Bidirectional,Concatenate,Reshape
-opiner = pd.read_excel('../input/iot-discussion/Opiner.xlsx')
-combined = pd.read_excel('../input/iot-discussion/Combined.xlsx')
-validation = pd.read_excel('../input/iot-discussion/Validation_Sample.xlsx')
+opiner = pd.read_excel('Opiner_Samples.xlsx')
+combined = pd.read_excel('Combined_Training_Samples.xlsx')
+validation = pd.read_excel('Validation_Samples.xlsx')
 
 total = combined
 skf=StratifiedKFold(n_splits=10,shuffle=True, random_state = 42)
