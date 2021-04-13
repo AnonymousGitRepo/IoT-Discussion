@@ -106,8 +106,8 @@ def coherence_values_computation(dictionary, corpus, texts, limit, start=2, step
     
 model_list, coherence_values = coherence_values_computation (
    dictionary=id2word, corpus=corpus, texts=data_ready, 
-   start=1, limit=50, step=5)
-limit=50; start=1; step=5;
+   start=1, limit=50, step=4)
+limit=50; start=1; step=4;
 
 
 for m, cv in zip(x, coherence_values):
@@ -115,7 +115,7 @@ for m, cv in zip(x, coherence_values):
     
     
 ldamallet = gensim.models.wrappers.LdaMallet(
-             mallet_path, corpus=corpus, num_topics=10, id2word=id2word)
+             mallet_path, corpus=corpus, num_topics=12, id2word=id2word)
 
 coherencemodel = CoherenceModel(
               model=ldamallet, texts=data_ready, dictionary=id2word, coherence='c_v')
@@ -127,7 +127,7 @@ pickle.dump(ldamallet, open("ldamallet.p", "wb"))
 tm_results = ldamallet[corpus]
 
 df_weights = pandas.DataFrame.from_records([{v: k for v, k in row} for row in tm_results])
-df_weights.columns = ['Topic ' + str(i) for i in range(1,12)]
+df_weights.columns = ['Topic ' + str(i) for i in range(1,13)]
 topic = list(df_weights.idxmax(axis=1))
 
 df['Topics'] = topic
