@@ -1,102 +1,226 @@
 import pandas as pd
-import nltk
-from nltk.stem import WordNetLemmatizer,PorterStemmer
-from tensorflow.keras.optimizers import Adam
-from sklearn.manifold import TSNE
-from nltk.corpus import stopwords 
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics import confusion_matrix
+from numpy import random
 import re
-from numpy import array
+from tensorflow.keras.preprocessing.text import Tokenizer
 import numpy as np
-from sklearn.metrics import classification_report as cr 
-from sklearn.metrics import f1_score,  recall_score, roc_auc_score, precision_score
-from sklearn.feature_extraction.text import CountVectorizer,TfidfTransformer
-from sklearn.model_selection import StratifiedKFold
-from keras import Input,Model,callbacks
-from keras.layers import Dense,Dropout,Embedding,LSTM,Flatten,Dot,ReLU,LeakyReLU,LayerNormalization,GlobalAveragePooling1D,GlobalMaxPooling1D,Bidirectional,Concatenate,Reshape
-import math 
+from sklearn.model_selection import StratifiedKFold 
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
 import tensorflow as tf
-import scipy.sparse as sp
-from numpy.random import seed
-from tensorflow.keras.preprocessing.sequence import pad_sequences,skipgrams
-from tensorflow.keras.preprocessing.text import Tokenizer 
+from keras.layers import LSTM,Conv1D,Dense,Input,Dropout,Bidirectional,Concatenate,MaxPool1D,Flatten,GRU,Attention
+from keras import Model,callbacks
+from tensorflow.keras.optimizers import Adam
+from sklearn.metrics import f1_score,precision_score,recall_score, roc_auc_score, accuracy_score, matthews_corrcoef
+from pandas import DataFrame
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.preprocessing.text import text_to_word_sequence
 
-import pickle
-seed(1)
-tf.random.set_seed(2)
+import nltk
+nltk.download('stopwords')
+nltk.download('punkt')
+nltk.download('wordnet')
 
-dataset  = pickle.load(open("kfold_cross_validation_dataset_security_aspect.p","rb"))
+opiner = pd.read_csv('../input/iot-discussion/Opiner.csv')
+combined = pd.read_csv('../input/iot-discussion/Combined.csv')
+validation = pd.read_csv('../input/iot-discussion/Validation_Sample.csv')
+embed_matrix=pd.read_csv('../input/glove6b/glove.6B.200d.txt',sep=" ", header=None,quoting=3)
+
+vocab={}
+def feature_extraction(val):
+  vocab[val[0]]=np.array(val[1:])
+  return val
+
+embed_matrix.apply(feature_extraction,axis=1)
+
+
+
 
 stopword=stopwords.words("english")
-def SentenceCleaner2(sent):
+stopword.append("i'm")
+stopword.append('could')
+lemmatizer=WordNetLemmatizer()
+
+def SentenceCleaner(sent):
+#     print(sent)
     txt=""
     for word in re.split('[,()<>|}{~\]\[ ]',sent.lower()): #?
-        if word not in stopword:
-            txt+=(word+" ")
-    return txt
-for i in range(10):
-    dataset['X_Train'][i]=dataset['X_Train'][i].apply(SentenceCleaner2)
-    dataset['X_Test'][i]=dataset['X_Test'][i].apply(SentenceCleaner2)
+      
+      tempCheck=word
+
+      urls=r"(?i)((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+      word=re.sub(urls,"url",word)
+      word=re.sub("url_url","url",word)
+      word=re.sub(".*[=].*","",word)  #remove word with =
+
+      #word=re.sub("i/o","io",word)
+      word=re.sub("[:]"," ",word)
+      #word=re.sub("[.][.]+"," ",word)
+      #word=re.sub("[^ '\"]+[.][^ .'\"]+","",word)
+      word=re.sub("[-/]"," ",word)
+      #word=re.sub("[@][^ ]*","",word)  #remove word with @
+      
+      #word=re.sub(r'[uU][rR][lL]',"",word)  #remove word url
+      word=re.sub(r'[0-9@"]+',"",word)
+      #word=re.sub(r'[@_!#$%^&*()<>?\\|}{~:.;"+]+',"",word)
+
+      word_list=re.split('[ ]+',word)
+      
+      for w in word_list:
+        
+        if len(w)>1:
+          txt+=(w+" ")
+          
+    if txt=='':
+      txt='nan'
     
-def Train_Test_Data_vectorization(x_train,x_test,y_train,y_test):
-  tfidfTransformer = TfidfTransformer()
-  vect=CountVectorizer('english')
-  vect.fit(x_train)
+    return txt
 
-  x_train=vect.transform(x_train)
-  x_train=tfidfTransformer.fit_transform(x_train)
-
-  x_test=vect.transform(x_test)
-  x_test=tfidfTransformer.fit_transform(x_test)
+X_txt=opiner['Sentence'].apply(SentenceCleaner) # combined['Sentence'].apply(SentenceCleaner)
+X_test = validation['sentence'].apply(SentenceCleaner)
+#Input Feature
+unfounded=set()
+arr=[]
+empty_array=np.zeros((200))
+max_len=100
+for d in (X_txt):
+  temp=[]
+  for word in text_to_word_sequence(d):
+    if word in vocab:
+      temp.append(vocab[word])
+    else:
+      unfounded.add(word)
+    if len(temp)==max_len:
+#       print(word)
+      break
+      
+  while(len(temp)!=max_len):
+    temp.append(empty_array)
   
-  x_train=sp.csr_matrix.toarray(x_train)
-  x_test=sp.csr_matrix.toarray(x_test)
-  return x_train,x_test,y_train,y_test
+  arr.append(np.array(temp))
+X=np.array(arr)
+X = np.asarray(X).astype('float32')
+Y = opiner['IsAboutSecurity'] # combined['IsAboutSecurity']
+Y_test = validation['IsAboutSecurity']
+arr = []
+for d in (X_test):
+  temp=[]
+  for word in text_to_word_sequence(d):
+    if word in vocab:
+      temp.append(vocab[word])
+    else:
+      unfounded.add(word)
+    if len(temp)==max_len:
+#       print(word)
+      break
+      
+  while(len(temp)!=max_len):
+    temp.append(empty_array)
+  
+  arr.append(np.array(temp))
+X_test = np.asarray(X).astype('float32')
+skf=StratifiedKFold(n_splits=10,shuffle=True,random_state = 42)
+temp=skf.split(X,Y)
+dictionary_k_folds={"Train":[],"Test":[]}
+for train,test in temp:
+  dictionary_k_folds["Train"].append(train)
+  dictionary_k_folds["Test"].append(test)
 
-def DNN(x_train,x_test,y_train,y_test):
-  input=Input(shape=len(x_train[0]))
-  x=Dense(128,activation='relu')(input)
-  output=Dense(1,activation='sigmoid')(x)
-  model=Model([input],output)
-  return model
-def Model_Compilation(model):
-  return model.compile(optimizer='adam',loss='binary_crossentropy',metrics=['accuracy'])  
-def Model_Training(model,x_train,x_test,y_train,y_test):
-  cb = []
-  reduce_lr_loss = callbacks.ReduceLROnPlateau(monitor='loss', factor=.2, patience=2, verbose=0, min_delta=1e-6, mode='min')
-  cb.append(reduce_lr_loss)
-  early_stop = callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=5, verbose=0, mode='auto',restore_best_weights=True)
-  cb.append(early_stop)
-  history=model.fit(x_train,y_train,
-                  batch_size=128,
-                  epochs=20,validation_data=(x_test,y_test),
+def LSTMModel():
+
+    input=Input((100,50))
+
+    x=LSTM(64,input_shape=(100,50),return_sequences=True)(input)
+    x= Dense(16)(x)
+    x=Flatten()(x)
+    x=Dense(32,activation='relu')(x)
+    output=Dense(1,activation='sigmoid')(x)
+
+    model=Model([input],output) 
+    #model.summary()
+    model.compile(optimizer=Adam(learning_rate=2e-3),loss='binary_crossentropy',metrics=['accuracy'])
+    return model
+def Bi_LSTMModel():
+
+    input=Input((100,50))
+
+    x=LSTM(64,input_shape=(100,50),return_sequences=True)
+    y=LSTM(64,input_shape=(100,50),return_sequences=True, go_backwards=True)
+    x = Bidirectional(x, backward_layer=y)(input)
+    
+    x= Dense(64)(x)
+    x=Flatten()(x)
+    x=Dense(32,activation='relu')(x)
+    output=Dense(1,activation='sigmoid')(x)
+
+    model=Model([input],output) 
+    #model.summary()
+    model.compile(optimizer=Adam(learning_rate=2e-3),loss='binary_crossentropy',metrics=['accuracy'])
+    return model
+pre = []
+rec = []
+f1 = []
+mcc = []
+auc = []
+def training():
+    x_train=X[dictionary_k_folds["Train"][current_k]]
+    x_test=X[dictionary_k_folds["Test"][current_k]]
+    y_train=Y[dictionary_k_folds["Train"][current_k]]
+    y_test=Y[dictionary_k_folds["Test"][current_k]]
+
+    model = Bi_LSTMModel() # LSTMModel()
+    cb = []
+    reduce_lr_loss = callbacks.ReduceLROnPlateau(monitor='loss', factor=.2, patience=3, min_delta=1e-6, mode='min')
+    cb.append(reduce_lr_loss)
+    early_stop = callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10, mode='auto',restore_best_weights=True)
+    cb.append(early_stop)
+    history=model.fit(x_train,y_train,
+                  batch_size=64,
+                  epochs=50,
+                  shuffle=True,validation_data=(x_test,y_test),
+                  callbacks=cb,
+                  verbose=0
+                  )
+
+
+    y_pred=np.rint(model.predict(x_test))
+    pre_v,re_v,f1_score_val, ac, mc=Confusion_Matrix(model,x_train,x_test,y_train,y_test)
+    pre.append(pre_v[1])
+    rec.append(re_v[1])
+    f1.append(f1_score_val[1])
+    mcc.append(mc)
+    auc.append(ac)
+def performance_validation():
+    x_train=X
+    x_test=X_tset
+    y_train=Y
+    y_test=Y_test
+    model = Bi_LSTMModel() # LSTMModel()
+    cb = []
+    reduce_lr_loss = callbacks.ReduceLROnPlateau(monitor='loss', factor=.2, patience=3, min_delta=1e-6, mode='min')
+    cb.append(reduce_lr_loss)
+    early_stop = callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10, mode='auto',restore_best_weights=True)
+    cb.append(early_stop)
+    history=model.fit(x_train,y_train,
+                  batch_size=64,
+                  epochs=50,
                   shuffle=True,
                   callbacks=cb,
-                  verbose=0)
-def Confusion_Matrix(model,x_train,x_test,y_train,y_test):
-  y_pred=np.rint(model.predict(x_test))
-  
-
-  pre = precision_score(y_test, y_pred, average = None)
-  re = recall_score(y_test, y_pred, average = None)
-  f1_score_val=f1_score(test_y, final_output, average = None)
-
-  return pre,re,f1_score_val
+                  verbose=0
+                  )
 
 
-f1=[]
-pre=[]
-re=[]
-for k in range(10):
-  x_train,x_test,y_train,y_test=dataset['X_Train'][k],dataset['X_Test'][k],dataset['Y_Train'][k],dataset['Y_Test'][k]
-  x_train,x_test,y_train,y_test=Train_Test_Data_vectorization(x_train,x_test,y_train,y_test)
-  model=DNN(x_train,x_test,y_train,y_test)
-  Model_Compilation(model)
+    y_pred=np.rint(model.predict(x_test))
+    pre_v,re_v,f1_score_val, ac, mc=Confusion_Matrix(model,x_train,x_test,y_train,y_test)
+    print(pre_v[1], re_v[1], f1_score_val[1], mc, ac)
 
-  Model_Training(model,x_train,x_test,y_train,y_test)
-  pre_val,re_val,f1_val=Confusion_Matrix(model,x_train,x_test,y_train,y_test)
-  
-  f1.append(f1_val)
-  pre.append(pre_val)
-  re.append(re_val)
-  
-print(sum(pre)[1]/10,sum(re)[1]/10,sum(f1)[1]/10,sum(auc)/10)
+
+for i in range(10):
+    current_k = i
+    training()
+
+print(sum(pre)/10,sum(rec)/10,sum(f1)/10, sum(auc)/10, sum(mcc)/10)
+
+print('Validation Performance')
+performance_validation()
