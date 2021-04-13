@@ -22,9 +22,9 @@ nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('wordnet')
 
-opiner = pd.read_csv('Opiner_Samples.xlsx')
-combined = pd.read_csv('Combined_Training_Samples.xlsx')
-validation = pd.read_csv('Validation_Samples.xlsx')
+opiner = pd.read_excel('Opiner_Samples.xlsx')
+combined = pd.read_excel('Combined_Training_Samples.xlsx')
+validation = pd.read_excel('Validation_Samples.xlsx')
 embed_matrix=pd.read_csv('../input/glove6b/glove.6B.200d.txt',sep=" ", header=None,quoting=3)
 
 vocab={}
