@@ -12,9 +12,9 @@ import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 
-opiner = pd.read_excel('../input/iot-discussion/Opiner.xlsx')
-combined = pd.read_excel('../input/iot-discussion/Combined.xlsx')
-validation = pd.read_excel('../input/iot-discussion/Validation_Sample.xlsx')
+opiner = pd.read_excel('Opiner_Samples.xlsx')
+combined = pd.read_excel('Combined_Training_Samples.xlsx')
+validation = pd.read_excel('Validation_Samples.xlsx')
 
 
 def cross_fold(dataset, label):
