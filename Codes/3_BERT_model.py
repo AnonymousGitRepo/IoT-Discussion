@@ -90,7 +90,7 @@ class BertModel:
 
         loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
         metric = tf.keras.metrics.SparseCategoricalAccuracy('accuracy')
-        optimizer = tf.keras.optimizers.Adam(learning_rate = 1e-5, epsilon = 1e-08)
+        optimizer = tf.keras.optimizers.Adam(learning_rate = 3e-5, epsilon = 1e-08)
 
         self.model.compile(loss = loss, optimizer = optimizer, metrics = [metric])
 
