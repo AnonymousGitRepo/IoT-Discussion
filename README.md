@@ -25,11 +25,9 @@ This repository contains the implementation of IoT Security Discussions
 *   LDA Mallet
 
 # Architecture Overview
-*   Traditional Deep Learning Methods : We follow the standard architecture of traditional DNN, CNN, and LSTM that are ubiquitously used in various research works for sentiment         analysis [[1]](#1) [[2]](#2) [[3]](#3) [[4]](#4). We use a single neuron with sigmoid activation for the output layer that means we classify an instance positively only if         output is greater or equals to .5. We follow standard grid search algorithms for fine-tuning hyperparameters. A brief overview of these architectures are given below-
+*   Traditional Deep Learning Methods : We follow the standard architecture of traditional LSTM that is ubiquitously used in various research works for sentiment         analysis [[1]](#1) [[2]](#2) [[3]](#3) [[4]](#4). We use a single neuron with sigmoid activation for the output layer that means we classify an instance positively only if         output is greater or equals to .5. We follow standard grid search algorithms for fine-tuning hyperparameters. A brief overview of these architectures are given below-
 
 
-    * ___CNN___: We implement CNN following the architecture used by Dang at el.[[1]](#1). The Architecture contains four different layers e.g. convolutional layer, pooling layer, dropout layer, and fully connected layer. After fine tuning, our final CNN model has an input layer followed by a convolutional layer, dropout layer, pooling layer, flatten layer, a dense layer and finally the output layer. For a detailed hyperparameter set, please follow 4_CNN_model.py.
-    * ___DNN___: We implement DNN following the architecture used by Dang at el.[[1]](#1). After fine tuning, our final DNN model has an input layer followed by a dense layer and the output layer. For a detailed hyperparameter set, please follow 3_DNN_model.py.
     * ___LSTM___: We follow the architecture used by Alharbi at el.[[4]](#4). After fine tuning, our final LSTM model has an input layer followed by a lstm layer, a dense layer, flatten layer, again a dense layer and the output layer. For a detailed hyperparameter set, please follow 4_LSTM_model.py.
     * ___BiLSTM___: We implement a single layer BiLSTM model following the proposed architecture by Hameed at el. [[6]](#6) for sentiment detection of a single sentence. Architure contains a single bi-directional lstm layer followed by a pooling layer, a concatenation layer and the final output layer. For a detailed hyperparameter set, please follow 5_Bi_LSTM_model.py.
 *   BERT based Advanced DL Models: BERT based model pre-trained on a large corpus of English data, over multiple gigantic datasets like Wikipedia, CC-News, OpenWebText, and etc,  in a self-supervised fashion with the Masked language modeling (MLM) objective. Taking a sentence, the model randomly masks 15% of the words in the input then runs the entire masked sentence through the model and has to predict the masked words. On the top of this embedding, we use pre-trained BERT sequence classifier that classifies sentence/ sentences according to a given number of classes. These pre-trained classifier has a high computation architecture that is pre-trained on GLUE dataset. We set the output layer with 2 neurons(Security & Non-security) and classified each sentence into the class having the maximum value among the classes. We then tune the parameters on the training dataset. There already exists a suggested hyperparameter set in huggingface for these transformers model. For example, suggested hyperparameters for BERT sequence classifiers are batch-size = 32, learning-rate = 3e-5, epochs = 3, max-sequence-length = 128. We applied grid search hyperparameter tuning here. For example, our batch-size tuning sets are  {16,32,64}, learning-rate are {1e-5, 3e-5} and epochs are {2,3,4}. A brief overview of used BERT-based models are given below-
@@ -40,9 +38,7 @@ This repository contains the implementation of IoT Security Discussions
      * ___XLNet___: We use xlnet-base-cased model that is trained on English Wikipedia, and BookCorpus, and etc. This model has around 110M parameters.
      * ___DistilBERT___: We use distilbert-base-uncased[[7]](#7) model that is trained on same data as BERT. This model squeezes the layers which result in a smaller parameter than BERT of size 66M.
      * ___ALBERT___: We use albert-base-v1 model that is trained on same data as BERT. This model has only 11M parameters.
-     * ___FunnelBERT___: We use funnel-transformer/small-base model that is trained onBookCorpus, a dataset consisting of 11,038 unpublished books, English Wikipedia (excluding lists, tables and headers), Clue Web: a dataset of 733,019,372 English web pages, GigaWord: an archive of newswire text data, Common Crawl: a dataset of raw web pages. This model has 115M parameters.
-     * ___ELECTRA___: We use google/electra-small-discriminator model that has only 14M parameters.
-* We collect all information about dataset and model from [huggingface](https://huggingface.co/models). For further details please follow the site.
+
      
      
 
@@ -66,20 +62,15 @@ You need to download the datasets from corresponding source (please follow the '
 # Code Replication
 After tuning, the best hyperparameters for each model are provided in the codes. Please follow the following steps to replicate this repo- 
 1. download and install all requirements and materials stated above 
-1. download BenchmarkUddinSO-ConsoliatedAspectSentiment.xls from Data folder
+1. download all files from Data folder
+1. IoT_Training_Samples_Agreement.xlsx, IoT_Validation_Samples_Agreement.xlsx file contain opinions of two coders either the sentence is security related or not e.g. 1 indicates security related and 0 indicates not. 
+1. IoT_Training_samples.xlsx dataset contains new 1000 training samples that are collected from IoT dataset. 
+1. Opiner_Samples.xlsx contains 4297 samples and Combined_Training_Samples.xlsx contains 5297 training samples. Validation_Samples.xlsx contains 984 samples that are used for testing. 
 1. run 1_shallow_models.py from Codes folder to get performaces of Baseline-SVM and Logits
-1. download kfold_cross_validation_dataset_security_aspect.p from Data folder(Recomended) **or** run 2_10_fold_cross_validation_dataset.py. A file named kfold_cross_validation_dataset_security_aspect.p will be created in your environment. This file may differ from provided one beacuse of random variable. 
-1. run 3_DNN_models.py, 4_CNN_model.py, 5_LSTM_model.py, 6_Bi_LSTM_model.py to get performances of Deep Neural Network, CNN, LSTM and Bi-LSTM respectively.
-1. run 7_BERT_model.py, 8_RoBERTa_model.py, 9_XLNet_model.py, 10_DistilBERT_model.py, 11_ALBERT_model.py, 12_FunnelBERT_model.py, 13_Electra_model.py to get performances of BERT, RoBERTa, XLNet, DistilBERT, ALBERT, FunnelBERT, and Electra respectively.
-1. run 14_SecBot.py to get SecBot model described in our Paper. SecBot_weights.p file will be created in your environment after successful completion of this step. 
-1. download Agreement_IoT_Training_samples.xlsx dataset. This file contains opinions of two coders either the sentence is security related or not e.g. 1 indicates security related and 0 indicates not. 
-1. download IoT_Training_samples.xlsx dataset from Data folder. This dataset are the new 1000 training samples. 
-1. run 15\_SecBot+.py to get Sec\_Bot+ model. SecBot+\_weights.p will be cretaed in your environment
-1. download Agreement\_Random_dataset.xlsx and Agreement_Judgemental_dataset.xlsx dataset from Data folder. These files contain opinions of two coders either the sentence is security related or not e.g. 1 indicates security related and 0 indicates not.
-1. download Random_dataset.xlsx(384 rows) and Judgemental_dataset.xlsx (600 rows).
-1. run 16_Performance\_evaluation\_of\_SecBot\+\_and\_SecBot.py to get performances of SecBot and SecBot+
-1. run 17_Label_SO_IoT_Dataset_using_SecBot+.py to label all sentences of SO_IoT_sentences.csv. A new file IoT_Security_dataset.csv will be created.
-1. Make sure, you have downloaded Mallet from provided links and unzipped mallet-X(e.g. mallet2.0.8) to mallet-X/bin/mallet. run 18_Topic_Modeling.py and IoT_security_topics.xlsx file will be created. This file also present inside the Data folder. You can get 11 topics name from that file.
+1. run 2_DLL_models.py to get performances of LSTM and Bi-LSTM respectively.
+1. run 3_BERT_model.py, 4_Roberta_model.py, 5_Albert_model.py, 6_XLNet_model.py, 8_Distilbert_model.py to get performances of BERT, RoBERTa, ALBERT, XLNet, and DistilBERT respectively.
+1. run 9_Label_SO_IoT_Dataset_using_SecBot+.py to label all sentences of SO_IoT_sentences.csv. A new file IoT_Security_dataset.csv will be created.
+1. Make sure, you have downloaded Mallet from provided links and unzipped mallet-X(e.g. mallet2.0.8) to mallet-X/bin/mallet. run 10_Topic_Modeling.py and IoT_security_topics.xlsx file will be created. This file also present inside the Data folder. You can get 11 topics name from that file.
 1. downlaod IoTPostInformation.csv, QuestionTags.pkl, and SO_IoT_sentences.rar file to create evolution charts and figures.
 
 _N.B. Performance depends on random state. Random state may differ environment to environment and performance may also vary._
