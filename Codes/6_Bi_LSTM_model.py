@@ -1,200 +1,202 @@
-import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.metrics import confusion_matrix
-from numpy import random
-import re
-from tensorflow.keras.preprocessing.text import Tokenizer
+from transformers import *
 import numpy as np
-from sklearn.model_selection import StratifiedKFold 
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
+import pandas as pd
+import random as rd
 import tensorflow as tf
-from keras.layers import LSTM,Conv1D,Dense,Input,Dropout,Bidirectional,Concatenate,MaxPool1D,Flatten,GRU,Attention
-from keras import Model,callbacks
 from tensorflow.keras.optimizers import Adam
-from sklearn.metrics import f1_score,precision_score,recall_score,roc_auc_score
-from pandas import DataFrame
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-
-import nltk
-nltk.download('stopwords')
-nltk.download('punkt')
-nltk.download('wordnet')
-
-dataset=pd.read_excel('BenchmarkUddinSO-ConsoliatedAspectSentiment.xlsx')
+from sklearn.metrics import classification_report as cr 
+from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_score, accuracy_score, matthews_corrcoef, confusion_matrix, roc_curve
+from sklearn.model_selection import StratifiedKFold
+from keras import Input,Model,callbacks
 
 
+np.random.seed(10)
+rd.seed(10)
+tf.random.set_seed(10)
+import scipy.sparse as sp
 
-current_aspect="Security"
-def Label(row):
-  if current_aspect in row:
-    return 1
-  return 0
+from sklearn.feature_extraction.text import CountVectorizer,TfidfTransformer
+from sklearn.model_selection import StratifiedKFold
+from keras import Input,Model,callbacks
+from keras.layers import Dense,Dropout,Embedding,LSTM,Flatten,Dot,ReLU,LeakyReLU,LayerNormalization,GlobalAveragePooling1D,GlobalMaxPooling1D,Bidirectional,Concatenate,Reshape
+opiner = pd.read_excel('../input/iot-discussion/Opiner.xlsx')
+combined = pd.read_excel('../input/iot-discussion/Combined.xlsx')
+validation = pd.read_excel('../input/iot-discussion/Validation_Sample.xlsx')
 
-dataset = dataset.drop_duplicates(keep='first')
-data = dataset['sent']
-labels = dataset['codes'] 
-Y=labels.apply(Label)
-
-Y=Y.to_numpy()
-
-embed_matrix=pd.read_csv('glove.6B.200d.txt',sep=" ", header=None,quoting=3)
-
-vocab={}
-def feature_extraction(val):
-  vocab[val[0]]=np.array(val[1:])
-  return val
-
-embed_matrix.apply(feature_extraction,axis=1)
-
-
-
-
-stopword=stopwords.words("english")
-stopword.append("i'm")
-stopword.append('could')
-lemmatizer=WordNetLemmatizer()
-
-def SentenceCleaner(sent):
-    # print(sent)
-    txt=""
-    for word in re.split('[,()<>|}{~\]\[ ]',sent.lower()): #?
-      
-      tempCheck=word
-
-      urls=r"(?i)((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
-      word=re.sub(urls,"url",word)
-      word=re.sub("url_url","url",word)
-      word=re.sub(".*[=].*","",word)  #remove word with =
-
-      #word=re.sub("i/o","io",word)
-      word=re.sub("[:]"," ",word)
-      #word=re.sub("[.][.]+"," ",word)
-      #word=re.sub("[^ '\"]+[.][^ .'\"]+","",word)
-      word=re.sub("[-/]"," ",word)
-      #word=re.sub("[@][^ ]*","",word)  #remove word with @
-      
-      #word=re.sub(r'[uU][rR][lL]',"",word)  #remove word url
-      word=re.sub(r'[0-9@"]+',"",word)
-      #word=re.sub(r'[@_!#$%^&*()<>?\\|}{~:.;"+]+',"",word)
-
-      word_list=re.split('[ ]+',word)
-      
-      if w not in stopword and w!='':
-        
-          #w=re.sub("apis","api",w)
-          #w=re.sub("'s","",w)  
-          #w=re.sub("'","",w)
-          #w=re.sub("\"","",w)
-          #w=re.sub("^[a-zA-Z]$","",w)
-            if len(w)>1:
-            #lem = lemmatizer.lemmatize(w)
-                txt+=(w+" ")
-          
-    if txt=='':
-      txt='nan'
-    
-    return txt
-
-X_txt=data.apply(SentenceCleaner)
-
-#Input Feature
-unfounded=set()
-arr=[]
-empty_array=np.zeros((200))
-max_len=100
-for d in (X_txt):
-  temp=[]
-  for word in text_to_word_sequence(d):
-    if word in vocab:
-      temp.append(vocab[word])
-    else:
-      unfounded.add(word)
-    if len(temp)==max_len:
-      print(word)
-      break
-      
-  while(len(temp)!=max_len):
-    temp.append(empty_array)
-  
-  arr.append(np.array(temp))
-X=np.array(arr)
-X = np.asarray(X).astype('float32')
-
-
-skf=StratifiedKFold(n_splits=10,shuffle=True,random_state = 42)
-temp=skf.split(X,Y)
-dictionary_k_folds={"Train":[],"Test":[]}
+total = combined
+skf=StratifiedKFold(n_splits=10,shuffle=True, random_state = 42)
+temp=skf.split(total['Sentence'],total['IsAboutSecurity'])
+dataset={"X_Train":[],"Y_Train":[],"X_Test":[],"Y_Test":[]}
 for train,test in temp:
-  dictionary_k_folds["Train"].append(train)
-  dictionary_k_folds["Test"].append(test)
+    print(train)
+    dataset["X_Train"].append(total['Sentence'][train])
+    dataset["Y_Train"].append(total['IsAboutSecurity'][train])
+    dataset["X_Test"].append(total['Sentence'][test])
+    dataset["Y_Test"].append(total['IsAboutSecurity'][test])
 
 
-
-
-def Bi_LSTMModel():
-
-    input=Input((100,200))
-
-    x=LSTM(64,input_shape=(100,200),return_sequences=True)
-    y=LSTM(64,input_shape=(100,200),return_sequences=True, go_backwards=True)
-    x = Bidirectional(x, backward_layer=y)(input)
+class BertModel:
+    def __init__(self,label,aspect):
+        self.num_class = label
+#         self.tokenizer = AlbertTokenizer.from_pretrained('albert-base-v2')
+#         self.model = TFAlbertForSequenceClassification.from_pretrained('albert-base-v2', num_labels=2)
+#         self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+#         self.model = TFBertForSequenceClassification.from_pretrained('bert-base')
+#         self.tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
+#         self.model = TFRobertaForSequenceClassification.from_pretrained('roberta-base')
+        self.tokenizer = XLNetTokenizer.from_pretrained('xlnet-base-cased')
+        self.model = TFXLNetForSequenceClassification.from_pretrained('xlnet-base-cased')
+#         self.tokenizer = ElectraTokenizer.from_pretrained('google/electra-small-discriminator')
+#         self.model = TFElectraForSequenceClassification.from_pretrained('google/electra-small-discriminator')
+#         self.model = TFFunnelForSequenceClassification.from_pretrained('funnel-transformer/small-base' , num_labels = self.num_class)
+#         self.tokenizer = FunnelTokenizer.from_pretrained('funnel-transformer/small-base')
+        self.dataset = dataset
+        self.current_aspect = aspect
     
-    x= Dense(64)(x)
-    x=Flatten()(x)
-    x=Dense(32,activation='relu')(x)
-    output=Dense(1,activation='sigmoid')(x)
 
-    model=Model([input],output) 
-    #model.summary()
-    model.compile(optimizer=Adam(learning_rate=2e-3),loss='binary_crossentropy',metrics=['accuracy'])
-    return model
-def Confusion_Matrix(model,x_train,x_test,y_train,y_test):
-    y_pred=np.rint(model.predict(x_test))
-    # report=cr(y_test,y_pred,labels=[1,0])
-    #print(y_pred)
-    
-    pre = precision_score(y_test, y_pred, average = None)
-    rec = recall_score(y_test, y_pred, average = None)
-    f1_score_val=f1_score(test_y, final_output, average = None)
 
-    return pre,rec,f1_score_val
 
-pre = []
-rec = []
-f1 = []
-def training():
-    x_train=X[dictionary_k_folds["Train"][current_k]]
-    x_test=X[dictionary_k_folds["Test"][current_k]]
-    y_train=Y[dictionary_k_folds["Train"][current_k]]
-    y_test=Y[dictionary_k_folds["Test"][current_k]]
+    def re_initialize(self):
+#         self.model = TFBertForSequenceClassification.from_pretrained('bert-base')
+#         self.model = TFRobertaForSequenceClassification.from_pretrained('roberta-base')
+#         self.model = TFAlbertForSequenceClassification.from_pretrained('albert-base-v2', num_labels=2)
+        self.model = TFXLNetForSequenceClassification.from_pretrained('xlnet-base-cased')
+#         self.model = TFElectraForSequenceClassification.from_pretrained('google/electra-small-discriminator')
+#         self.model = TFFunnelForSequenceClassification.from_pretrained('funnel-transformer/small-base' , num_labels = self.num_class)
+        
 
     
-    model = Bi_LSTMModel()
-    cb = []
-    reduce_lr_loss = callbacks.ReduceLROnPlateau(monitor='loss', factor=.2, patience=3, min_delta=1e-6, mode='min')
-    cb.append(reduce_lr_loss)
-    early_stop = callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10, mode='auto',restore_best_weights=True)
-    cb.append(early_stop)
-    history=model.fit(x_train,y_train,
-                  batch_size=512,
-                  epochs=20,
-                  shuffle=True,validation_data=(x_test,y_test),
-                  callbacks=cb,
-                  verbose=0
-                  )
+    
+    def tokenize(self, dataset):
+        input_ids = []
+        attention_masks = []
+        for sent in dataset:
+            sent = str(sent)
+            bert_inp = self.tokenizer .encode_plus(sent.lower(), add_special_tokens = True, max_length = 100, truncation = True, padding = 'max_length', return_attention_mask = True)
+            input_ids.append(bert_inp['input_ids'])
+            attention_masks.append(bert_inp['attention_mask'])
+
+        train_input_ids = np.asarray(input_ids)
+        train_attention_masks = np.array(attention_masks)
+
+        return [train_input_ids,train_attention_masks]
+    
+    def model_compilation(self):
+
+        #print('\nAlBert Model', self.model.summary())
 
 
-    y_pred=np.rint(model.predict(x_test))
-    pre_v,re_v,f1_score_val=Confusion_Matrix(model,x_train,x_test,y_train,y_test)
-    pre.append(pre_v[1])
-    rec.append(re_v[1])
-    f1.append(f1_score_val[1])
+        loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
+        metric = tf.keras.metrics.SparseCategoricalAccuracy('accuracy')
+        optimizer = tf.keras.optimizers.Adam(learning_rate = 3e-5, epsilon = 1e-08)
 
+        self.model.compile(loss = loss, optimizer = optimizer, metrics = [metric])
 
+    
+    def run_model(self):
+        
+        f1=[]
+        recall = []
+        precision = []
+        auc = []
+        mcc = []
+        df = []
+        for i in range(10):
+            train = self.tokenize(self.dataset['X_Train'][i].to_list())
+            test = self.tokenize(self.dataset['X_Test'][i].to_list())
+            train_y = self.dataset['Y_Train'][i].to_numpy()
+            test_y = self.dataset['Y_Test'][i].to_numpy()
+            
+            
 
-for i in range(10):
-    current_k = i
-    training()
+            self.re_initialize()
+            self.model_compilation()
 
-print(sum(pre)/10,sum(rec)/10,sum(f1)/10)
+            history = self.model.fit(train, train_y, batch_size = 32, epochs = 3, validation_data = (test,test_y), callbacks = callbacks.ReduceLROnPlateau(monitor='loss', factor=.2, patience=3, verbose=0, min_delta=1e-6, mode='min'))
+            
+            output = self.model.predict(test)
+            
+            
+            
+
+#             final_output = np.argmax(output, axis = -1)[0]
+#             print(output)
+            final_output = np.argmax(output['logits'], axis = -1)
+            f1_score_val=f1_score(test_y, final_output, average = None)
+            
+
+            pre = precision_score(test_y, final_output, average = None)
+            re = recall_score(test_y, final_output, average = None)
+            ac = accuracy_score(test_y, final_output)
+            rc=roc_auc_score(test_y, final_output)
+            mc = matthews_corrcoef(test_y, final_output)
+
+            f1.append(f1_score_val)
+            precision.append(pre)
+            recall.append(re)
+            auc.append(rc)
+            mcc.append(mc)
+            df.extend(final_output)
+
+#             print(f1_score_val, ac)
+
+        #print(f1)
+        return f1,precision,recall,auc, mcc, df
+    def run_iot_model(self):
+        
+        f1=[]
+        recall = []
+        precision = []
+        auc = []
+        mcc = []
+        for i in range(1):
+            train = self.tokenize(opiner['Sentence'].to_list())
+            test = self.tokenize(validation['sentence'].to_list())
+            train_y = opiner['IsAboutSecurity'].to_numpy()
+            test_y = validation['IsAboutSecurity'].to_numpy()
+            
+            
+
+            self.re_initialize()
+            self.model_compilation()
+
+            history = self.model.fit(train, train_y, batch_size = 32, epochs = 3, validation_data = (test,test_y), callbacks = callbacks.ReduceLROnPlateau(monitor='loss', factor=.2, patience=3, verbose=0, min_delta=1e-6, mode='min'))
+            
+            output = self.model.predict(test)
+            
+            
+            
+
+#             final_output = np.argmax(output, axis = -1)[0]
+            final_output = np.argmax(output['logits'], axis = -1)
+    
+            pro_score = [ val[0]/(val[0]+val[1]) for val in output['logits']]
+            
+            f1_score_val=f1_score(test_y, final_output, average = None)
+            
+
+            pre = precision_score(test_y, final_output, average = None)
+            re = recall_score(test_y, final_output, average = None)
+            ac = accuracy_score(test_y, final_output)
+            rc=roc_auc_score(test_y, final_output)
+            mc = matthews_corrcoef(test_y, final_output)
+
+            f1.append(f1_score_val)
+            precision.append(pre)
+            recall.append(re)
+            auc.append(rc)
+            mcc.append(mc)
+#             print(f1_score_val)
+            p_fpr, p_tpr, _ = roc_curve(test_y, pro_score)
+            
+
+        #print(f1)
+
+        return f1,precision,recall,auc, mcc, p_fpr, p_tpr, output['logits']
+class_count = 2
+aspect = 10
+bert = BertModel(class_count,aspect)
+f1,precision, recall, auc, mcc, df = bert.run_model()
+print(sum(precision)[1]/10, sum(recall)[1]/10, sum(f1)[1]/10, sum(auc)/10, sum(mcc)/10)
+f1,precision, recall, auc, mcc, df = bert.run_iot_model()
+print(sum(precision)[1], sum(recall)[1], sum(f1)[1], sum(auc), sum(mcc))
