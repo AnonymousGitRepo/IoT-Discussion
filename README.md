@@ -79,14 +79,14 @@ _N.B. Performance depends on random state. Random state may differ environment t
 
 ## References
 
-<a id="1" >[5]</a>
+<a id="1" >[1]</a>
 Y. Liu, M. Ott, N. Goyal, J. Du, M. Joshi, D. Chen, O. Levy, M. Lewis, L. Zettlemoyer,and V. Stoyanov,  "Roberta:  A robustly optimized BERT pretraining approach" CoRR,vol. abs/1907.11692, 2019.  
 
-<a id="2">[6]</a>
+<a id="2">[2]</a>
 Z. Hameed and B. Garcia-Zapirain, "Sentiment Classification Using a Single-Layered BiLSTM Model," in IEEE Access, vol. 8, pp. 73992-74001, 2020, doi: 10.1109/ACCESS.2020.2988550.  
 
-<a id="3">[7]</a>
+<a id="3">[3]</a>
 J. Devlin, M. Chang, K. Lee, and K. Toutanova, "BERT: pre-training of deep bidirectionaltransformers for language understanding" CoRR, vol. abs/1810.04805, 2018.  
 
-<a id="4">[8]</a>
+<a id="4">[4]</a>
 .  Sanh,  L.  Debut,  J.  Chaumond,  and  T.  Wolf,  “Distilbert,  a  distilled  version  of  bert:smaller, faster, cheaper and lighter,”ArXiv, vol. abs/1910.01108, 2019.
