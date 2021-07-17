@@ -89,4 +89,7 @@ Z. Hameed and B. Garcia-Zapirain, "Sentiment Classification Using a Single-Layer
 J. Devlin, M. Chang, K. Lee, and K. Toutanova, "BERT: pre-training of deep bidirectionaltransformers for language understanding" CoRR, vol. abs/1810.04805, 2018.  
 
 <a id="4">[4]</a>
-.  Sanh,  L.  Debut,  J.  Chaumond,  and  T.  Wolf,  “Distilbert,  a  distilled  version  of  bert:smaller, faster, cheaper and lighter,”ArXiv, vol. abs/1910.01108, 2019.
+Sanh,  L.  Debut,  J.  Chaumond,  and  T.  Wolf,  “Distilbert,  a  distilled  version  of  bert:smaller, faster, cheaper and lighter,”ArXiv, vol. abs/1910.01108, 2019.
+
+<a id="5">[5]</a>
+Jeniya Tabassum, Mounica Maddela, Wei Xu, and Alan Ritter,  “Code and Named Entity Recognition in StackOverflow”The Annual Meeting of the Association for Computational Linguistics (ACL), 2020.
