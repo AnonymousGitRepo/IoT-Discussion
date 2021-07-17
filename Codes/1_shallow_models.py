@@ -12,19 +12,8 @@ import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 
-opiner = pd.read_excel('Opiner_Samples.xlsx')
-combined = pd.read_excel('Combined_Training_Samples.xlsx')
-validation = pd.read_excel('Validation_Samples.xlsx')
+iot = pd.read_excel('IoT_Security_Dataset.xlsx')
 
-
-def cross_fold(dataset, label):
-  skf=StratifiedKFold(n_splits=10,shuffle=True,random_state = 42)
-  temp=skf.split(dataset, label)
-  dictionary_k_folds={"Train":[],"Test":[]}
-  for train,test in temp:
-    dictionary_k_folds["Train"].append(train)
-    dictionary_k_folds["Test"].append(test)
-  return dictionary_k_folds
 def VocabularyCleaner(vocabulary):
         number=r"^[0-9]+"
         number=re.compile(number)
@@ -95,10 +84,10 @@ def cross_fold_performance(dataset, label):
   mccc = []
   for k in range(10):
     current_k = k
-    x_train=dataset[dictionary_k_folds["Train"][current_k]]
-    x_test=dataset[dictionary_k_folds["Test"][current_k]]
-    y_train=label[dictionary_k_folds["Train"][current_k]]
-    y_test=label[dictionary_k_folds["Test"][current_k]]
+    x_train=iot[iot.Run!=current_k].Sentence
+    x_test=iot[iot.Run==current_k].Sentence
+    y_train=iot[iot.Run!=current_k].Security
+    y_test=iot[iot.Run==current_k].Security
 
     xTrain,xTest=Sentence2VectPreparation(x_train,x_test)
     #select the classifier
@@ -109,24 +98,3 @@ def cross_fold_performance(dataset, label):
     PerformanceMatrix(y_test,prediction)
 
   print(sum(pre)/10, sum(re)/10,sum(F1)/10 , sum(auc)/10, sum(mccc)/10)
-
- def validation_performance(dataset, label):
-  x_train=dataset.to_list()
-  x_test=validation['sentence'].to_list()
-  x_train = [str(i) for i in x_train]
-  x_test = [str(i) for i in x_test]
-  y_train=label
-  y_test=validation['IsAboutSecurity']
-  xTrain,xTest=Sentence2VectPreparation(x_train,x_test)
-    #select the classifier
-  cls = classifier("oth")
-  cls.fit(xTrain, y_train)
-  prediction = cls.predict(xTest)
-  PerformanceMatrix(y_test,prediction)
- 
-#performance of opiner
-# cross_fold_performance(opiner['Sentence'], opiner['IsAboutSecurity'])
-# validation_performance(opiner['Sentence'], opiner['IsAboutSecurity'])
-#performance of combined
-# cross_fold_performance(combined['Sentence'], combined['IsAboutSecurity'])
-# validation_performance(combined['Sentence'], combined['IsAboutSecurity'])
